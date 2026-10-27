@@ -1,4 +1,4 @@
-﻿# =============================================================================
+# =============================================================================
 # ForestEye.ps1
 # Active Directory Security Audit Tool - Full IR Edition
 # Output: users.csv, computers.csv, domain.csv, acl.csv, gpo.csv,
@@ -1025,13 +1025,15 @@ if (-not $SkipACL) {
     function Test-AclAce {
         param($Ace,[string]$TargetReason,[string]$TargetTier,[string]$TargetDN,[string]$TargetClass,[string]$TargetName)
         if ($Ace.AccessControlType -ne [System.Security.AccessControl.AccessControlType]::Allow) { return }
-        # IdentityReference puo' essere NTAccount (default da Get-ADObject) oppure
-        # SecurityIdentifier. Il vecchio "-as" cast falliva silenziosamente su NTAccount
-        # e scartava OGNI ACE con trustee risolvibile (Everyone, Authenticated Users, ...).
+        # IdentityReference can be either NTAccount (the default returned by
+        # Get-ADObject) or SecurityIdentifier. The old "-as" cast silently failed
+        # for NTAccount values, discarding EVERY ACE with a resolvable trustee
+        # (Everyone, Authenticated Users, ...).
         # The main scan loop already requests SID-keyed rules, so this normally
-        # takes the cheap branch. The Translate fallback stays for callers that
-        # still pass NTAccount ACEs - memoised, because each miss is an LSA
-        # round-trip and the same handful of trustees repeat across every ACE.
+        # takes the cheap branch. The Translate fallback remains for callers
+        # that still pass NTAccount ACEs - memoised, because each cache miss
+        # requires an LSA round-trip and the same small set of trustees
+        # appears repeatedly across ACEs.
         $ir = $Ace.IdentityReference
         if ($ir -is [System.Security.Principal.SecurityIdentifier]) {
             $sid = $ir
