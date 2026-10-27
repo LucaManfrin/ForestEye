@@ -1477,9 +1477,9 @@ Write-Host ""
 Write-Info "Finding HTML dashboard template..."
 $TemplatePath = $null
 $candidates = @(
-    (Join-Path $PSScriptRoot "AD-Security-Dashboard.html"),
-    (Join-Path $PSScriptRoot "..\AD-Security-Dashboard.html"),
-    (Join-Path (Get-Location) "AD-Security-Dashboard.html")
+    (Join-Path $PSScriptRoot "ForestEye.html"),
+    (Join-Path $PSScriptRoot "..\ForestEye.html"),
+    (Join-Path (Get-Location) "ForestEye.html")
 )
 foreach ($c in $candidates) { if (Test-Path $c) { $TemplatePath = (Resolve-Path $c).Path; break } }
 
@@ -1533,7 +1533,7 @@ $($propLines -join ",`n")
             $newHtml = $before + $block + $after
             $newHtml = $newHtml -replace 'var DASH_AUTO_LAUNCH = false', 'var DASH_AUTO_LAUNCH = true'
 
-            $OutputDashboard = Join-Path $OutputPath "AD-Security-Dashboard.html"
+            $OutputDashboard = Join-Path $OutputPath "ForestEye.html"
             [System.IO.File]::WriteAllText($OutputDashboard, $newHtml, (New-Object System.Text.UTF8Encoding $false))
 
             Write-Host ""
@@ -1561,7 +1561,7 @@ try {
     Write-Host "  +-----------------------------------------+" -ForegroundColor DarkCyan
     Write-Host "  ZIP: $ZipPath" -ForegroundColor Cyan
     Write-Host ""
-    Write-Success "Extract the ZIP and open AD-Security-Dashboard.html to start the analysis."
+    Write-Success "Extract the ZIP and open ForestEye.html to start the analysis."
 } catch {
     Write-Warn "Could not create ZIP: $_"
     Write-Warn "Output preserved at: $OutputPath"
